@@ -1,0 +1,8 @@
+<mat-form-field class="filter">
+  <input
+    matInput
+    placeholder="Buscar"
+    [value]="filter()"
+    (input)="onInput($event.target.value)"
+  />
+</mat-form-field>

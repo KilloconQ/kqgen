@@ -1,0 +1,28 @@
+{
+  "name": "gencli",
+  "version": "1.0.0",
+  "description": "Generador CLI de componentes y servicios para Angular, NestJS, React u otros",
+  "bin": {
+    "gen": "./gen.mjs"
+  },
+  "type": "module",
+  "author": "Fernando Corrales",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^12.6.3"
+  },
+  "keywords": [
+    "cli",
+    "generator",
+    "angular",
+    "nestjs",
+    "react",
+    "scaffolding"
+  ],
+  "files": [
+    "gen.mjs",
+    "commands/",
+    "templates/"
+  ]
+}
+

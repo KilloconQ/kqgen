@@ -1,0 +1,42 @@
+<div class="table-container">
+  <mat-form-field appearance="outline" class="table-container__filter">
+    <mat-label>Filter</mat-label>
+    <input
+      matInput
+      placeholder="Type to filter"
+      [(ngModel)]="filterValue()"
+      (ngModelChange)="filterValue.set($event)"
+    />
+  </mat-form-field>
+
+  @if (tableData().data.length > 0) {
+    <table
+      mat-table
+      [dataSource]="tableData()"
+      matSort
+      class="mat-elevation-z8"
+    >
+      @for (column of columns(); track column.key) {
+        <ng-container [matColumnDef]="column.key">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ column.label }}
+          </th>
+          <td mat-cell *matCellDef="let row">
+            {{ row[column.key] }}
+          </td>
+        </ng-container>
+      }
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+    </table>
+
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 25]"
+      [pageSize]="10"
+      showFirstLastButtons
+    ></mat-paginator>
+  } @else {
+    <div class="table-container__empty-message">No data available</div>
+  }
+</div>

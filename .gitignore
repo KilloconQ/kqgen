@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Locks de otros gestores
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Bun
+# (Solo si NO querés subir el lock, pero es RECOMENDADO subirlo)
+# bun.lockb
+
+# Entornos
+.env
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+
+# Compilados
+dist/
+build/
+*.log

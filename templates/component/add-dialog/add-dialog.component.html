@@ -1,0 +1,31 @@
+<section class="dialog">
+  <form [formGroup]="{{name}}Form" class="dialog__form">
+    <mat-form-field appearance="fill">
+      <mat-label>Control 1</mat-label>
+      <input matInput formControlName="control1" />
+      <mat-error *ngIf="{{name}}Form.get('control1')?.invalid">Error</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Control 2</mat-label>
+      <mat-select formControlName="control2">
+        <mat-option value="option1">Option 1</mat-option>
+        <mat-option value="option2">Option 2</mat-option>
+      </mat-select>
+      <mat-error *ngIf="{{name}}Form.get('control2')?.invalid">Error</mat-error>
+    </mat-form-field>
+  </form>
+
+  <div class="dialog__actions">
+    <button
+      mat-raised-button
+      class="dialog__buttons--cancel"
+      (click)="dialogRef.close()"
+    >
+      Cancelar
+    </button>
+    <button mat-raised-button class="dialog__buttons--send" (click)="send()">
+      Aceptar
+    </button>
+  </div>
+</section>

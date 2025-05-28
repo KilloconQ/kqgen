@@ -1,0 +1,13 @@
+.filter {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 1rem;
+
+  input {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
