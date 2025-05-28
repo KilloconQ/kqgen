@@ -8,10 +8,14 @@
 
 ```bash
 # Ejecutar sin instalar (con pnpm)
-pnpm dlx github:tuusuario/gencli <comando> <ruta> [opciones]
+pnpm dlx github:killoconq/gencli <comando> <ruta> [opciones]
+npx github:killoconq/gencli <comando> <ruta> [opciones]
+bunx github:killoconq/gencli <comando> <ruta> [opciones]
 
 # O instalar globalmente (después puedes correr simplemente "gen")
 pnpm add -g gencli
+bun add -g gencli
+npm i -g gencli
 gen <comando> <ruta> [opciones]
 ```
 
@@ -67,10 +71,10 @@ Genera un servicio Angular REST, GraphQL (con queries) o vacío.
 #### Ejemplos
 
 ```bash
-gen ng:service user shared/services
-gen ng:service producto shared/services --gql
-gen ng:service auth shared/services --rest
-gen ng:service util shared/services --none
+gen ng:service shared/services/user
+gen ng:service shared/services/producto --gql
+gen ng:service shared/services/auth  --rest
+gen ng:service shared/services/util --none
 ```
 
 ---

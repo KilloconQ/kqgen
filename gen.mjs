@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { fileURLToPath } from "url";
+import fs from "fs";
 import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,8 +42,27 @@ if (commandKey === "help") {
 
   const parts = fullPath.split("/");
   const name = parts.pop();
-  const targetDir = path.join("app", ...parts);
+
+  const isRoot =
+    fs.existsSync("src/app") &&
+    !process.cwd().endsWith("src") &&
+    !process.cwd().endsWith("src/app");
+
+  let targetDir;
+  if (isRoot) {
+    targetDir = path.join("app", ...parts); // root: bajo src/app/
+  } else {
+    targetDir = path.join(...parts); // subcarpetas: relativo al cwd
+  }
   const isBare = flags.some((flag) => ["--bare", "-b"].includes(flag));
 
-  await action(name, targetDir, isBare, flags);
+  try {
+    await action(name, targetDir, isBare, flags);
+  } catch (e) {
+    if (e.name === "ExitPromptError" || e.message?.includes("SIGINT")) {
+      console.log("\nPrompt cancelado por el usuario.");
+      process.exit(0);
+    }
+    throw e;
+  }
 }
