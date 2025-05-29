@@ -3,6 +3,7 @@
 import { fileURLToPath } from "url";
 import fs from "fs";
 import path from "path";
+import { loadGenConfig } from "./utils/load-gen-config.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,15 +11,18 @@ const __dirname = path.dirname(__filename);
 const [, , command, fullPath, ...flags] = process.argv;
 const [scope, subcommand] = command?.split(":") ?? [];
 
+const genConfig = await loadGenConfig();
+
 const commandMap = {
-  "ng:component": "ng-component.js",
-  "ng:util": "ng-service.js",
-  "ng:service": "ng-service.js",
-  "ng:c": "ng-component.js",
-  "ng:s": "ng-service.js",
   "--help": "help.js",
   "-h": "help.js",
+  "ng:c": "ng-component.js",
+  "ng:component": "ng-component.js",
+  "ng:s": "ng-service.js",
+  "ng:service": "ng-service.js",
+  "ng:util": "ng-service.js",
   help: "help.js",
+  init: "init.js",
 };
 
 const commandKey = subcommand ? `${scope}:${subcommand}` : command;
@@ -34,6 +38,9 @@ const { default: action } = await import(`file://${filePath}`);
 
 if (commandKey === "help") {
   action();
+} else if (commandKey === "init") {
+  await action();
+  process.exit(0);
 } else {
   if (!fullPath) {
     console.error("Uso: gen <comando> <ruta/completa/al/nombre> [--bare | -b]");
@@ -45,7 +52,6 @@ if (commandKey === "help") {
 
   let targetDir;
 
-  // Si hay un path (más de un segmento), busca src/app y créalo si no existe
   if (parts.length > 0) {
     // Busca src/app hacia arriba en la jerarquía de carpetas
     let rootDir = process.cwd();
@@ -75,7 +81,7 @@ if (commandKey === "help") {
   const isBare = flags.some((flag) => ["--bare", "-b"].includes(flag));
 
   try {
-    await action(name, targetDir, isBare, flags);
+    await action(name, targetDir, isBare, flags, genConfig);
   } catch (e) {
     if (e.name === "ExitPromptError" || e.message?.includes("SIGINT")) {
       console.log("\nPrompt cancelado por el usuario.");

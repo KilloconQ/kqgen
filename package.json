@@ -1,7 +1,7 @@
 {
-  "name": "gencli",
+  "name": "kqgen",
   "version": "1.0.0",
-  "description": "Generador CLI de componentes y servicios para Angular, NestJS, React u otros",
+  "description": "Generador CLI de componentes y servicios para Angular, NestJS y otros",
   "bin": {
     "gen": "./gen.mjs"
   },
@@ -25,4 +25,3 @@
     "templates/"
   ]
 }
-

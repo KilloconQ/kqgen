@@ -1,8 +1,9 @@
 @use "@angular/material" as mat;
 
-$primary-color: #377bc8;
+$primary-color: {{primaryColor}};
+$secondary-color: {{secondaryColor}};
 $cancel-color: grey;
-$container-border: 5px;
+$container-border: {{borderRadius}};
 
 .dialog {
   display: flex;

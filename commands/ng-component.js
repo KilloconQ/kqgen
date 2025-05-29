@@ -42,9 +42,13 @@ export default async function generateNgComponent(
   customPath = "app",
   isBare = false,
   flags = [],
+  genConfig = {},
 ) {
   const baseDir = path.resolve(`${customPath}/${name}`);
   const pascal = toPascalCase(name);
+  const primaryColor = genConfig.primaryColor || "#000";
+  const secondaryColor = genConfig.secondaryColor || "#fff";
+  const borderRadius = genConfig.borderRadius || "5px";
 
   // Detectar el preset a usar
   const preset = getPreset(flags);
@@ -83,11 +87,16 @@ export default async function generateNgComponent(
   ]);
 
   const replace = (str) =>
-    str.replace(/{{name}}/g, name).replace(/{{pascalName}}/g, pascal);
+    str
+      .replace(/{{name}}/g, name)
+      .replace(/{{pascalName}}/g, pascal)
+      .replace(/{{primaryColor}}/g, primaryColor)
+      .replace(/{{secondaryColor}}/g, secondaryColor)
+      .replace(/{{borderRadius}}/g, borderRadius);
 
   await writeFile(path.join(baseDir, `${name}.component.ts`), replace(ts));
   await writeFile(path.join(baseDir, `${name}.component.html`), replace(html));
   await writeFile(path.join(baseDir, `${name}.component.scss`), replace(scss));
 
-  console.log(`${name} generado en ${baseDir} usando el preset "${preset}"`);
+  console.log(`${name} generado exitosamente`);
 }
