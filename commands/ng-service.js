@@ -38,7 +38,6 @@ export default async function generateService(
 
   const filePath = path.join(baseDir, `${name}.service.ts`);
 
-  // Pregunta si sobrescribir si ya existe
   let exists = false;
   try {
     await access(filePath, constants.F_OK);
@@ -60,7 +59,6 @@ export default async function generateService(
     }
   }
 
-  // === TIPO DE SERVICIO POR FLAG O SELECTOR ===
   const { isRest, isGql, isNone } = parseFlags(flags);
   let apiType = null;
   if (isRest) apiType = "rest";
@@ -99,7 +97,6 @@ export default async function generateService(
     );
   }
 
-  // Si es GraphQL, crea los 4 queries y el index.ts
   if (apiType === "gql") {
     const queriesDir = path.join(baseDir, "queries");
     await mkdir(queriesDir, { recursive: true });
@@ -124,16 +121,15 @@ export default async function generateService(
       await writeFile(outPath, queryContent);
     }
 
-    // Genera el index.ts de barril
     const indexContent = `
-export * from './get-all-query';
-export * from './get-one-query';
-export * from './create-query';
-export * from './update-query';
-`.trimStart();
+      export * from './get-all-query';
+      export * from './get-one-query';
+      export * from './create-query';
+      export * from './update-query';
+    `.trimStart();
 
     await writeFile(path.join(queriesDir, "index.ts"), indexContent);
-    console.log("Queries y barril generados en", queriesDir);
+    console.log("Queries and barrel generados en", queriesDir);
   }
 
   const tpl = await readFile(templateFile, "utf-8");
@@ -143,5 +139,5 @@ export * from './update-query';
     .replace(/{{upperName}}/g, name.toUpperCase());
 
   await writeFile(filePath, content);
-  console.log(`Servicio generado: ${filePath}`);
+  console.log(`${name} service generated successfully`);
 }

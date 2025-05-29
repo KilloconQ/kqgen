@@ -11,7 +11,9 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class {{pascalName}}Service {
-  constructor(private apollo: Apollo) {}
+  private readonly apollo: Apollo;
+
+  constructor() {}
 
   getAll() {
     return this.apollo.query({

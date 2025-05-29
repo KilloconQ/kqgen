@@ -12,7 +12,6 @@ function toPascalCase(str) {
     .join("");
 }
 
-// Utilidad para obtener el preset del flag
 function getPreset(flags) {
   const aliases = {
     table: "table",
@@ -50,7 +49,6 @@ export default async function generateNgComponent(
   const secondaryColor = genConfig.secondaryColor || "#fff";
   const borderRadius = genConfig.borderRadius || "5px";
 
-  // Detectar el preset a usar
   const preset = getPreset(flags);
 
   await mkdir(baseDir, { recursive: true });
@@ -61,7 +59,6 @@ export default async function generateNgComponent(
     await mkdir(path.join(baseDir, "interfaces"), { recursive: true });
   }
 
-  // Carga las plantillas según el preset
   const [ts, html, scss] = await Promise.all([
     readFile(
       path.join(
@@ -98,5 +95,5 @@ export default async function generateNgComponent(
   await writeFile(path.join(baseDir, `${name}.component.html`), replace(html));
   await writeFile(path.join(baseDir, `${name}.component.scss`), replace(scss));
 
-  console.log(`${name} generado exitosamente`);
+  console.log(`${name} component successfully generated`);
 }

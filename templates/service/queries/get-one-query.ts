@@ -4,7 +4,7 @@ export const GET_{{upperName}}_BY_ID = gql`
   query Get{{pascalName}}ById($id: ID!) {
     {{name}}(id: $id) {
       id
-      # ...otros campos
+      # ...others
     }
   }
 `;

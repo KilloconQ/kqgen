@@ -6,30 +6,47 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const configExample = `
-  // gen.config.js
-  export default {
-    theme: {
-      primaryColor: "#377bc8",
-      secondaryColor: "#7c3aed",
-      borderRadius: "8px",
-      fontFamily: "Inter, sans-serif"
-    },
-    output: {
-      preset: "tailwind", // or 'scss', 'css'
-      generateVariablesFile: true
-    }
-  };
-  `.trimStart();
+// gen.config.js
+export default {
+  theme: {
+    primaryColor: "#377bc8",
+    secondaryColor: "#7c3aed",
+    borderRadius: "8px",
+    fontFamily: "Inter, sans-serif"
+  },
+  output: {
+    preset: "scss",
+    generateVariablesFile: true
+  }
+};
+`.trimStart();
 
-export default function initGenConfig() {
-  const targetPath = path.resolve(process.cwd(), "gen.config.js");
-  if (fs.existsSync(targetPath)) {
+function findProjectRoot(dir) {
+  while (dir !== "/" && dir !== ".") {
+    if (
+      fs.existsSync(path.join(dir, "src/app")) ||
+      fs.existsSync(path.join(dir, "package.json"))
+    ) {
+      return dir;
+    }
+    dir = path.dirname(dir);
+  }
+  return process.cwd();
+}
+
+export default function initGenConfig({ force = false } = {}) {
+  const rootDir = findProjectRoot(process.cwd());
+  const targetPath = path.join(rootDir, "gen.config.js");
+  if (fs.existsSync(targetPath) && !force) {
     console.error(
-      "El archivo gen.config.js ya existe en el directorio actual.",
+      "gen.config.js file already exists in the project root:",
+      rootDir,
     );
     return;
   }
-
   fs.writeFileSync(targetPath, configExample, "utf8");
-  console.log("Archivo gen.config.js creado en la raíz de tu proyecto");
+  console.log(
+    "gen.config.js file generated in the root of the project:",
+    rootDir,
+  );
 }

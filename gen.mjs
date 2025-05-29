@@ -28,9 +28,19 @@ const commandMap = {
 const commandKey = subcommand ? `${scope}:${subcommand}` : command;
 const file = commandMap[commandKey];
 
-if (!file) {
-  console.error(`Comando no reconocido: ${commandKey}`);
+/**
+ * Helper: Show help and exit
+ */
+async function showHelpAndExit() {
+  const helpPath = path.join(__dirname, "commands", "help.js");
+  const { default: showHelp } = await import(`file://${helpPath}`);
+  showHelp();
   process.exit(1);
+}
+
+if (!file) {
+  console.error(`Unknown command: ${commandKey}`);
+  await showHelpAndExit();
 }
 
 const filePath = path.join(__dirname, "commands", file);
@@ -43,39 +53,49 @@ if (commandKey === "help") {
   process.exit(0);
 } else {
   if (!fullPath) {
-    console.error("Uso: gen <comando> <ruta/completa/al/nombre> [--bare | -b]");
-    process.exit(1);
+    console.error("Usage: kqgen <command> <full/path/to/name> [--bare | -b]");
+    await showHelpAndExit();
   }
 
   const parts = fullPath.split("/");
   const name = parts.pop();
 
+  /**
+   * Find the nearest project root that contains src/app
+   */
+  function findProjectRootWithSrcApp(dir) {
+    while (dir !== "/" && dir !== ".") {
+      if (fs.existsSync(path.join(dir, "src/app"))) return dir;
+      dir = path.dirname(dir);
+    }
+    return null;
+  }
+
   let targetDir;
+  const cwd = process.cwd();
+  const projectRoot = findProjectRootWithSrcApp(cwd);
 
   if (parts.length > 0) {
-    // Busca src/app hacia arriba en la jerarquía de carpetas
-    let rootDir = process.cwd();
-    let foundSrcApp = false;
-    while (rootDir !== "/" && !foundSrcApp) {
-      if (fs.existsSync(path.join(rootDir, "src/app"))) {
-        foundSrcApp = true;
-        break;
-      }
-      rootDir = path.dirname(rootDir);
+    // If subfolders are specified, ALWAYS generate under src/app/...
+    if (projectRoot) {
+      targetDir = path.join(projectRoot, "src/app", ...parts);
+    } else {
+      fs.mkdirSync(path.join(cwd, "src/app"), { recursive: true });
+      targetDir = path.join(cwd, "src/app", ...parts);
+      console.log("Created 'src/app' at:", path.join(cwd, "src/app"));
     }
-    if (!foundSrcApp) {
-      // Crea src/app en el directorio actual
-      rootDir = process.cwd();
-      fs.mkdirSync(path.join(rootDir, "src/app"), { recursive: true });
-      console.log(
-        "Creado directorio 'src/app' en:",
-        path.join(rootDir, "src/app"),
-      );
-    }
-    targetDir = path.join(rootDir, "src/app", ...parts);
   } else {
-    // Sin / => usa la carpeta actual como base
-    targetDir = process.cwd();
+    // If just the name is given (no slash), decide based on current directory
+    if (
+      projectRoot &&
+      (cwd === projectRoot || cwd === path.join(projectRoot, "src"))
+    ) {
+      // If in project root or src/, generate in src/app
+      targetDir = path.join(projectRoot, "src/app");
+    } else {
+      // If already inside src/app or a subfolder, generate here
+      targetDir = cwd;
+    }
   }
 
   const isBare = flags.some((flag) => ["--bare", "-b"].includes(flag));
@@ -84,9 +104,11 @@ if (commandKey === "help") {
     await action(name, targetDir, isBare, flags, genConfig);
   } catch (e) {
     if (e.name === "ExitPromptError" || e.message?.includes("SIGINT")) {
-      console.log("\nPrompt cancelado por el usuario.");
+      console.log("\nSee you soon.");
       process.exit(0);
     }
-    throw e;
+    // On any other error, show help as fallback
+    console.error(e);
+    await showHelpAndExit();
   }
 }

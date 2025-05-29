@@ -1,15 +1,19 @@
 {
   "name": "kqgen",
   "version": "1.0.0",
-  "description": "Generador CLI de componentes y servicios para Angular, NestJS y otros",
+  "description": "CLI components and services generator for Angular and NestJS",
   "bin": {
-    "gen": "./gen.mjs"
+    "kqgen": "./gen.mjs"
+  },
+  "scripts": {
+    "release": "standard-version"
   },
   "type": "module",
   "author": "Fernando Corrales",
   "license": "MIT",
   "dependencies": {
-    "inquirer": "^12.6.3"
+    "inquirer": "^12.6.3",
+    "standard-version": "^9.5.0"
   },
   "keywords": [
     "cli",
@@ -22,6 +26,9 @@
   "files": [
     "gen.mjs",
     "commands/",
-    "templates/"
+    "templates/",
+    "utils/",
+    "package.json",
+    "README.md"
   ]
 }
