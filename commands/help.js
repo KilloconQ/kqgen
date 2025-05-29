@@ -1,40 +1,44 @@
 export default function showHelp() {
   console.log(`
-    Uso:
-      gen <comando> <ruta/completa/al/nombre> [opciones]
+  kqgen CLI – Angular Component & Service Generator
 
-    Comandos disponibles:
-      ng:component       Genera un componente Angular con estructura base o preset
-      ng:service         Genera un servicio Angular (REST, GraphQL o vacío)
+  Usage:
+    kqgen <command> <full/path/to/name> [options]
 
-    Presets y tipos para ng:component:
-      --type=table, -t, -tt           Genera un componente de tabla (con paginador/sort)
-      --type=filter, -tf              Genera un componente filtro (standalone)
-      --type=add-dialog, -tad         Genera un formulario en diálogo (Angular Material)
-      --bare, -b, -B                  Solo el archivo base (sin carpetas extra)
-      (Si no se indica --type, se genera el preset default)
+  Available commands:
+    ng:component        Generate an Angular component (presets: default, table, filter, add-dialog)
+    ng:service          Generate an Angular service (REST, GraphQL or empty)
+    init                Create a sample gen.config.js in the project root
 
-    Opciones para ng:service:
-      --rest, -r                      Fuerza servicio tipo REST
-      --gql, -g                       Fuerza servicio tipo GraphQL (genera queries base)
-      --none, -n                      Servicio limpio (solo estructura)
-      (Si no se indica tipo, se preguntará en consola)
+  Options for ng:component:
+    --type=table,   -t, -tt        Table component (with paginator and sorting)
+    --type=filter,  -tf            Filter standalone component
+    --type=add-dialog, -tad        Form in Angular Material dialog
+    --bare,         -b, -B         Only the base file (no extra folders)
+    (If --type is not set, the default preset is used)
 
-    Ejemplos:
-      gen ng:component dashboard/home/user
-      gen ng:component shared/avatar --bare
-      gen ng:component dashboard/products --type=table
-      gen ng:component dashboard/products -t
-      gen ng:component shared/quick-search --type=filter
-      gen ng:component shared/user-form --type=add-dialog
-      gen ng:service auth shared/services --rest
-      gen ng:service producto shared/services --gql
+  Options for ng:service:
+    --rest,         -r             Force REST service
+    --gql,          -g             Force GraphQL service (generates queries)
+    --none,         -n             Empty service (structure only)
+    (If type is not set, a prompt will appear)
 
-    Notas:
-      - Todos los comandos crean las carpetas bajo src/app/
-      - Si no se especifica el tipo de servicio o componente, se mostrará un selector interactivo (si aplica)
-      - El comando 'gen help', 'gen --help' o 'gen -h' muestra esta ayuda
+  Examples:
+    kqgen ng:component dashboard/home/user
+    kqgen ng:component shared/avatar --bare
+    kqgen ng:component dashboard/products --type=table
+    kqgen ng:component shared/quick-search --type=filter
+    kqgen ng:component shared/user-form --type=add-dialog
+    kqgen ng:service auth shared/services --rest
+    kqgen ng:service product shared/services --gql
+    kqgen init
 
-    `);
+  Notes:
+    - All commands generate files inside src/app/ (by default)
+    - If no type is specified, an interactive prompt will be shown (when applicable)
+    - Customize colors and styles by creating gen.config.js in your project root
+    - Use 'kqgen help', 'kqgen --help' or 'kqgen -h' to see this help
+
+  `);
   process.exit(0);
 }

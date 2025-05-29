@@ -1,103 +1,111 @@
-# gencli
+# kqgen
 
-> 🛠️ CLI minimalista y extensible para generar componentes y servicios en Angular (y próximamente para otros frameworks).
+> **A fast and flexible CLI for generating Angular components and services.**
+> Includes presets for tables, filters and for REST/GraphQL services.
 
 ---
 
-## Instalación
+## 🚀 Installation
 
-```bash
-# Ejecutar sin instalar (con pnpm)
-pnpm dlx github:killoconq/gencli <comando> <ruta> [opciones]
-npx github:killoconq/gencli <comando> <ruta> [opciones]
-bunx github:killoconq/gencli <comando> <ruta> [opciones]
+### Global
 
-# O instalar globalmente (después puedes correr simplemente "gen")
-pnpm add -g gencli
-bun add -g gencli
-npm i -g gencli
-gen <comando> <ruta> [opciones]
+```sh
+npm install -g kqgen
+# or
+pnpm add -g kqgen
+# or
+bun add -g kqgen
+```
+
+### Temporary usage (without global install)
+
+```sh
+npx kqgen <command> ...
 ```
 
 ---
 
-## Comandos disponibles
+## ⚡️ Basic Usage
 
-### `ng:component`
+```sh
+kqgen <command> <full/path/to/name> [options]
+```
 
-Genera un componente Angular con estructura base y diferentes presets según el tipo.
+### Examples
 
-#### Presets/Tipos soportados
-
-- `--type=table`, `-t`, `-tt`  
-  Componente tipo tabla (`MatTable`) con paginador y ordenamiento.
-- `--type=filter`, `-tf`  
-  Componente filtro standalone.
-- `--type=add-dialog`, `-tad`  
-  Componente formulario en diálogo (Angular Material).
-- `--bare`, `-b`, `-B`  
-  Solo genera el archivo base (`.ts`, `.html`, `.scss`) sin carpetas extra.
-- _(Por defecto)_  
-  Componente base con carpetas `services/`, `models/`, `interfaces/`.
-
-#### Ejemplos
-
-```bash
-gen ng:component dashboard/home/user
-gen ng:component shared/avatar --bare
-gen ng:component dashboard/products --type=table
-gen ng:component dashboard/products -t
-gen ng:component shared/quick-search --type=filter
-gen ng:component shared/user-form --type=add-dialog
+```sh
+kqgen ng:component dashboard/home/user
+kqgen ng:component shared/avatar --bare
+kqgen ng:component dashboard/products --type=table
+kqgen ng:component shared/quick-search --type=filter
+kqgen ng:component shared/user-form --type=add-dialog
+kqgen ng:service auth shared/services --rest
+kqgen ng:service product shared/services --gql
+kqgen init
 ```
 
 ---
 
-### `ng:service`
+## 🎛️ Component Presets and Types
 
-Genera un servicio Angular REST, GraphQL (con queries) o vacío.
+- `--type=table, -t, -tt`
+  Table component (Angular Material, paginator & sort)
+- `--type=filter, -tf`
+  Standalone filter component
+- `--type=add-dialog, -tad`
+  Form in Angular Material dialog
+- `--bare, -b, -B`
+  Only the base file (no services/models/interfaces folders)
+- If no --type is provided, the default preset is used
 
-#### Opciones
+---
 
-- `--rest`, `-r`  
-  Fuerza generación de servicio REST.
-- `--gql`, `-g`  
-  Fuerza generación de servicio GraphQL (genera queries base).
-- `--none`, `-n`  
-  Servicio limpio (solo estructura, sin métodos base).
-- _(Por defecto)_  
-  Se pregunta en consola el tipo de servicio.
+## 🚦 Service Options
 
-#### Ejemplos
+- `--rest, -r` REST service
+- `--gql, -g` GraphQL service (with base queries)
+- `--none, -n` Empty service (structure only)
 
-```bash
-gen ng:service shared/services/user
-gen ng:service shared/services/producto --gql
-gen ng:service shared/services/auth  --rest
-gen ng:service shared/services/util --none
+(If not specified, a prompt will be shown)
+
+---
+
+## 🎨 Global Customization
+
+Edit `gen.config.js` in your project root to change colors and styles for generated components:
+
+```js
+// gen.config.js
+export default {
+  theme: {
+    primaryColor: "#377bc8",
+    secondaryColor: "#7c3aed",
+    borderRadius: "8px",
+  },
+};
+```
+
+You can quickly generate this config with:
+
+```sh
+kqgen init
 ```
 
 ---
 
-## Notas
+## 📝 Notes
 
-- Todos los comandos crean las carpetas bajo `src/app/` por defecto.
-- Si no se especifica el tipo de servicio o componente, se mostrará un selector interactivo en la terminal (si aplica).
-- Puedes ver la ayuda con:  
-  `gen help`  
-  `gen --help`  
-  `gen -h`
-
----
-
-## Planeado próximamente
-
-- Soporte para NestJS (`nest:service`, `nest:module`)
-- Soporte para React (`react:component`)
-- Nuevos presets y estructuras customizables
+- All commands generate files inside `src/app/` by default (unless run from another subfolder).
+- If no type is specified for service or component, an interactive prompt appears.
+- Use `kqgen help`, `kqgen --help` or `kqgen -h` to display help.
+- Works on Linux, Mac, and Windows.
+- Inspired by the speed and flexibility of modern code generators.
 
 ---
 
-## Licencia
+## 🤝 Contributions
 
-MIT – creado por Fernando Corrales.
+Pull requests, feature ideas, and issues are welcome at [KilloconQ](https://github.com/KilloconQ/kqgen.git).
+Want new presets? Request or contribute them!
+
+---
