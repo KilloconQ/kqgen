@@ -6,6 +6,7 @@ src/
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+bun.lockb
 
 # Sistema
 .DS_Store
@@ -13,7 +14,6 @@ Thumbs.db
 
 # Bun
 # (Solo si NO querés subir el lock, pero es RECOMENDADO subirlo)
-# bun.lockb
 
 # Entornos
 .env
