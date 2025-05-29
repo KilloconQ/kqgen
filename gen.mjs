@@ -45,9 +45,9 @@ if (commandKey === "help") {
 
   let targetDir;
 
-  // Si hay un path (más de un segmento), siempre desde src/app
+  // Si hay un path (más de un segmento), busca src/app y créalo si no existe
   if (parts.length > 0) {
-    // Busca src/app desde la raíz del proyecto
+    // Busca src/app hacia arriba en la jerarquía de carpetas
     let rootDir = process.cwd();
     let foundSrcApp = false;
     while (rootDir !== "/" && !foundSrcApp) {
@@ -58,8 +58,13 @@ if (commandKey === "help") {
       rootDir = path.dirname(rootDir);
     }
     if (!foundSrcApp) {
-      console.error("No se encontró 'src/app' en la jerarquía de carpetas.");
-      process.exit(1);
+      // Crea src/app en el directorio actual
+      rootDir = process.cwd();
+      fs.mkdirSync(path.join(rootDir, "src/app"), { recursive: true });
+      console.log(
+        "Creado directorio 'src/app' en:",
+        path.join(rootDir, "src/app"),
+      );
     }
     targetDir = path.join(rootDir, "src/app", ...parts);
   } else {

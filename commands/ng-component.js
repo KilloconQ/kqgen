@@ -43,7 +43,7 @@ export default async function generateNgComponent(
   isBare = false,
   flags = [],
 ) {
-  const baseDir = path.resolve(`src/${customPath}/${name}`);
+  const baseDir = path.resolve(`${customPath}/${name}`);
   const pascal = toPascalCase(name);
 
   // Detectar el preset a usar

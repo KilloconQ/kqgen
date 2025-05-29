@@ -31,7 +31,7 @@ export default async function generateService(
   flags = [],
 ) {
   flags = flags || [];
-  const baseDir = path.resolve(`src/${customPath}`);
+  const baseDir = path.resolve(`${customPath}`);
   const pascal = toPascalCase(name);
 
   await mkdir(baseDir, { recursive: true });
