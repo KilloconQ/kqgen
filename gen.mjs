@@ -33,7 +33,7 @@ const filePath = path.join(__dirname, "commands", file);
 const { default: action } = await import(`file://${filePath}`);
 
 if (commandKey === "help") {
-  action(); // no necesita argumentos
+  action();
 } else {
   if (!fullPath) {
     console.error("Uso: gen <comando> <ruta/completa/al/nombre> [--bare | -b]");
@@ -43,17 +43,30 @@ if (commandKey === "help") {
   const parts = fullPath.split("/");
   const name = parts.pop();
 
-  const isRoot =
-    fs.existsSync("src/app") &&
-    !process.cwd().endsWith("src") &&
-    !process.cwd().endsWith("src/app");
-
   let targetDir;
-  if (isRoot) {
-    targetDir = path.join("app", ...parts); // root: bajo src/app/
+
+  // Si hay un path (más de un segmento), siempre desde src/app
+  if (parts.length > 0) {
+    // Busca src/app desde la raíz del proyecto
+    let rootDir = process.cwd();
+    let foundSrcApp = false;
+    while (rootDir !== "/" && !foundSrcApp) {
+      if (fs.existsSync(path.join(rootDir, "src/app"))) {
+        foundSrcApp = true;
+        break;
+      }
+      rootDir = path.dirname(rootDir);
+    }
+    if (!foundSrcApp) {
+      console.error("No se encontró 'src/app' en la jerarquía de carpetas.");
+      process.exit(1);
+    }
+    targetDir = path.join(rootDir, "src/app", ...parts);
   } else {
-    targetDir = path.join(...parts); // subcarpetas: relativo al cwd
+    // Sin / => usa la carpeta actual como base
+    targetDir = process.cwd();
   }
+
   const isBare = flags.some((flag) => ["--bare", "-b"].includes(flag));
 
   try {

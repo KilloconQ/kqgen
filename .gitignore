@@ -1,5 +1,6 @@
 # Dependencias
 node_modules/
+src/
 
 # Locks de otros gestores
 package-lock.json
