@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "CLI components and services generator for Angular and NestJS",
   "bin": {
-    "kqgen": "./gen.mjs"
+    "kqgen": "gen.mjs"
   },
   "scripts": {
     "release": "standard-version"
