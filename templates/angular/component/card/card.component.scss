@@ -1,0 +1,48 @@
+@use "@angular/material" as mat;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  min-height: 220px;
+  justify-content: flex-start;
+  @include mat.card-overrides(
+    (
+      elevated-container-color: white,
+    )
+  );
+
+  .card__icon {
+    mat-icon {
+      color: #1976d2;
+    }
+  }
+
+  h3 {
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    color: #4b5563;
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+}
+
+.card:hover {
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  transition:
+    box-shadow 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
+  transition-duration: 300ms;
+}

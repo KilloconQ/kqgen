@@ -14,14 +14,15 @@ function toPascalCase(str) {
 
 function getPreset(flags) {
   const aliases = {
-    table: "table",
-    "-t": "table",
-    "--type=table": "table",
-    "-tt": "table",
-    "-tf": "filter",
-    "--type=filter": "filter",
-    "-tad": "add-dialog",
     "--type=add-dialog": "add-dialog",
+    "--type=filter": "filter",
+    "--type=table": "table",
+    "--type=card": "card",
+    "-t": "table",
+    "-tad": "add-dialog",
+    "-tf": "filter",
+    "-tt": "table",
+    "-tc": "card",
   };
 
   for (const flag of flags) {
@@ -36,7 +37,7 @@ function getPreset(flags) {
   return "default";
 }
 
-export default async function generateNgComponent(
+export default async function generateComponent(
   name,
   customPath = "app",
   isBare = false,
@@ -63,21 +64,21 @@ export default async function generateNgComponent(
     readFile(
       path.join(
         __dirname,
-        `../templates/component/${preset}/${preset}.component.ts`,
+        `../templates/angular/component/${preset}/${preset}.component.ts`,
       ),
       "utf-8",
     ),
     readFile(
       path.join(
         __dirname,
-        `../templates/component/${preset}/${preset}.component.html`,
+        `../templates/angular/component/${preset}/${preset}.component.html`,
       ),
       "utf-8",
     ),
     readFile(
       path.join(
         __dirname,
-        `../templates/component/${preset}/${preset}.component.scss`,
+        `../templates/angular/component/${preset}/${preset}.component.scss`,
       ),
       "utf-8",
     ),

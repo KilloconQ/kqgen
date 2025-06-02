@@ -39,7 +39,6 @@ async function showHelpAndExit() {
 }
 
 if (!file) {
-  console.error(`Unknown command: ${commandKey}`);
   await showHelpAndExit();
 }
 

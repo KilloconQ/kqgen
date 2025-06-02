@@ -85,18 +85,15 @@ export default async function generateService(
     await mkdir(path.join(baseDir, "queries"), { recursive: true });
     templateFile = path.join(
       __dirname,
-      "../templates/angular/service/graphql.service.ts",
+      "../templates/service/graphql.service.ts",
     );
     console.log("Directorio de queries creado");
   } else if (apiType === "rest") {
-    templateFile = path.join(
-      __dirname,
-      "../templates/angular/service/rest.service.ts",
-    );
+    templateFile = path.join(__dirname, "../templates/service/rest.service.ts");
   } else {
     templateFile = path.join(
       __dirname,
-      "../templates/service/angular/empty.service.ts",
+      "../templates/service/empty.service.ts",
     );
   }
 
@@ -113,7 +110,7 @@ export default async function generateService(
 
     for (const { tpl, out } of queryTemplates) {
       const tplContent = await readFile(
-        path.join(__dirname, `../templates/angular/service/queries/${tpl}`),
+        path.join(__dirname, `../templates/service/queries/${tpl}`),
         "utf-8",
       );
       const outPath = path.join(queriesDir, out);
