@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 
 // Importa los queries generados
@@ -11,7 +11,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class {{pascalName}}Service {
-  private readonly apollo: Apollo;
+  private readonly apollo = inject(Apollo);
 
   constructor() {}
 
