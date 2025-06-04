@@ -50,6 +50,13 @@ export default async function generateComponent(
   const secondaryColor = genConfig.secondaryColor || "#fff";
   const borderRadius = genConfig.borderRadius || "5px";
 
+  const framework = genConfig.framework.name || "angular";
+  const frameworkVersion = genConfig.framework.version || 19;
+
+  let scriptExtension = "component.ts";
+  let templateExtension = "component.html";
+  let styleExtension = "component.scss";
+
   const preset = getPreset(flags);
 
   await mkdir(baseDir, { recursive: true });
@@ -58,6 +65,20 @@ export default async function generateComponent(
     await mkdir(path.join(baseDir, "services"), { recursive: true });
     await mkdir(path.join(baseDir, "models"), { recursive: true });
     await mkdir(path.join(baseDir, "interfaces"), { recursive: true });
+  }
+
+  switch (framework) {
+    case "angular":
+      if (frameworkVersion >= 20) {
+        scriptExtension = ".ts";
+        templateExtension = ".html";
+        styleExtension = ".scss";
+      }
+      break;
+
+    default:
+      console.error(`Unsupported framework: ${framework}`);
+      return;
   }
 
   const [ts, html, scss] = await Promise.all([
@@ -92,9 +113,15 @@ export default async function generateComponent(
       .replace(/{{secondaryColor}}/g, secondaryColor)
       .replace(/{{borderRadius}}/g, borderRadius);
 
-  await writeFile(path.join(baseDir, `${name}.component.ts`), replace(ts));
-  await writeFile(path.join(baseDir, `${name}.component.html`), replace(html));
-  await writeFile(path.join(baseDir, `${name}.component.scss`), replace(scss));
+  await writeFile(path.join(baseDir, `${name}${scriptExtension}`), replace(ts));
+  await writeFile(
+    path.join(baseDir, `${name}${templateExtension}`),
+    replace(html),
+  );
+  await writeFile(
+    path.join(baseDir, `${name}${styleExtension}`),
+    replace(scss),
+  );
 
   console.log(`${name} component successfully generated`);
 }

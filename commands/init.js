@@ -14,6 +14,10 @@ export default {
     borderRadius: "8px",
     fontFamily: "Inter, sans-serif"
   },
+  framework: {
+    name: "angular",
+    version: 20
+  },
   output: {
     preset: "scss",
     generateVariablesFile: true

@@ -28,15 +28,33 @@ function parseFlags(flags) {
 export default async function generateService(
   name,
   customPath = "app",
+  isBare = false,
   flags = [],
+  genConfig = {},
 ) {
   flags = flags || [];
   const baseDir = path.resolve(`${customPath}`);
   const pascal = toPascalCase(name);
 
   await mkdir(baseDir, { recursive: true });
+  const framework = genConfig.framework.name || "angular";
+  const frameworkVersion = genConfig.framework.version || 19;
 
-  const filePath = path.join(baseDir, `${name}.service.ts`);
+  let scriptExtension = ".service.ts";
+
+  switch (framework) {
+    case "angular":
+      if (frameworkVersion >= 20) {
+        scriptExtension = ".ts";
+      }
+      break;
+
+    default:
+      console.error(`Unsupported framework: ${framework}`);
+      return;
+  }
+
+  const filePath = path.join(baseDir, `${name}${scriptExtension}`);
 
   let exists = false;
   try {
