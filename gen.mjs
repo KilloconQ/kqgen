@@ -84,15 +84,12 @@ if (commandKey === "help") {
       console.log("Created 'src/app' at:", path.join(cwd, "src/app"));
     }
   } else {
-    // If just the name is given (no slash), decide based on current directory
     if (
       projectRoot &&
       (cwd === projectRoot || cwd === path.join(projectRoot, "src"))
     ) {
-      // If in project root or src/, generate in src/app
       targetDir = path.join(projectRoot, "src/app");
     } else {
-      // If already inside src/app or a subfolder, generate here
       targetDir = cwd;
     }
   }
