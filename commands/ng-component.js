@@ -50,8 +50,8 @@ export default async function generateComponent(
   const secondaryColor = genConfig.secondaryColor || "#fff";
   const borderRadius = genConfig.borderRadius || "5px";
 
-  const framework = genConfig.framework.name || "angular";
-  const frameworkVersion = genConfig.framework.version || 19;
+  const framework = genConfig.framework?.name || "angular";
+  const frameworkVersion = genConfig.framework?.version || 19;
 
   let scriptExtension = "component.ts";
   let templateExtension = "component.html";
