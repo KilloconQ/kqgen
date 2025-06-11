@@ -21,6 +21,7 @@ const commandMap = {
   "ng:s": "ng-service.js",
   "ng:service": "ng-service.js",
   "ng:util": "ng-service.js",
+  "-v": "version.js",
   help: "help.js",
   init: "init.js",
 };
@@ -44,6 +45,12 @@ if (!file) {
 
 const filePath = path.join(__dirname, "commands", file);
 const { default: action } = await import(`file://${filePath}`);
+
+if (commandKey === "-v") {
+  const { getVersion } = await import("./commands/version.js");
+  console.log(`Version: ${getVersion()}`);
+  process.exit(0);
+}
 
 if (commandKey === "help") {
   action();
