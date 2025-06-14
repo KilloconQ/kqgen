@@ -37,8 +37,9 @@ export default async function generateService(
   const pascal = toPascalCase(name);
 
   await mkdir(baseDir, { recursive: true });
-  const framework = genConfig.framework?.name || "angular";
-  const frameworkVersion = genConfig.framework?.version || 19;
+  console.log("gen");
+  const framework = genConfig.framework?.name ?? "angular";
+  const frameworkVersion = genConfig.framework?.version ?? 19;
 
   let scriptExtension = ".service.ts";
 
