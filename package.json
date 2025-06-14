@@ -1,6 +1,6 @@
 {
   "name": "kqgen",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "CLI components and services generator for Angular and NestJS",
   "bin": {
     "kqgen": "gen.mjs"
