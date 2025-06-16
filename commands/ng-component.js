@@ -85,21 +85,21 @@ export default async function generateComponent(
     readFile(
       path.join(
         __dirname,
-        `../templates/angular/.component/${preset}/${preset}..component.ts`,
+        `../templates/angular/component/${preset}/${preset}.component.ts`,
       ),
       "utf-8",
     ),
     readFile(
       path.join(
         __dirname,
-        `../templates/angular/.component/${preset}/${preset}..component.html`,
+        `../templates/angular/component/${preset}/${preset}.component.html`,
       ),
       "utf-8",
     ),
     readFile(
       path.join(
         __dirname,
-        `../templates/angular/.component/${preset}/${preset}..component.scss`,
+        `../templates/angular/component/${preset}/${preset}.component.scss`,
       ),
       "utf-8",
     ),
@@ -123,5 +123,5 @@ export default async function generateComponent(
     replace(scss),
   );
 
-  console.log(`${name} .component successfully generated`);
+  console.log(`${name} component successfully generated`);
 }
