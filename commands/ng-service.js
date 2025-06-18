@@ -115,7 +115,7 @@ export default async function generateService(
   } else {
     templateFile = path.join(
       __dirname,
-      "../templates/service/angular/empty.service.ts",
+      "../templates/service/angular/service/empty.service.ts",
     );
   }
 
