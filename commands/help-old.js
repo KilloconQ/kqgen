@@ -9,6 +9,7 @@ export default function showHelp() {
     ng:component        Generate an Angular component (presets: default, table, filter, add-dialog)
     ng:service          Generate an Angular service (REST, GraphQL or empty)
     init                Create a sample gen.config.js in the project root
+    --prettier,  -p     Enable prettier configuration
 
   Options for ng:component:
     --type=table,   -t, -tt        Table component (with paginator and sorting)
