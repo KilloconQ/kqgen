@@ -38,6 +38,9 @@ const commandMap = {
   "nest:res": "nest-resource.js",
   "nest:s": "nest-service.js",
   "nest:m": "nest-module.js",
+  //tools
+  "-p": "prettier.js",
+  "--prettier": "prettier.js",
   help: "help.js",
   init: "init.js",
 };
@@ -72,6 +75,9 @@ if (commandKey === "help") {
   action();
 } else if (commandKey === "init") {
   await action();
+  process.exit(0);
+} else if (commandKey === "-p" || commandKey === "--prettier") {
+  action();
   process.exit(0);
 } else {
   if (!fullPath) {

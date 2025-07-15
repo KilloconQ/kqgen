@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Generated files
+*.generated.js
+*.generated.ts
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package files
+*.tgz
+*.tar.gz
+
