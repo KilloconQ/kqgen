@@ -32,7 +32,7 @@ program
   .name(chalk.green('kqgen'))
   .description(chalk.blue('Angular & NestJS component and service generator'))
   .version(
-    genConfig.version || '1.3.0',
+    genConfig.version || '2.0.0',
     '-v, --version',
     chalk.yellow('output the current version')
   );
