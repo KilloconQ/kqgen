@@ -1,139 +1,122 @@
 // Comando: ng-service.js
-import { mkdir, writeFile, readFile, access, constants } from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
-import inquirer from "inquirer";
+import { mkdir, writeFile, readFile, access } from 'fs/promises';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import inquirer from 'inquirer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 function toPascalCase(str) {
   return str
-    .split("-")
-    .map((s) => s[0].toUpperCase() + s.slice(1))
-    .join("");
-}
-
-function parseFlags(flags) {
-  return {
-    isRest:
-      Array.isArray(flags) && flags.some((f) => f === "-r" || f === "--rest"),
-    isGql:
-      Array.isArray(flags) && flags.some((f) => f === "-g" || f === "--gql"),
-    isNone:
-      Array.isArray(flags) && flags.some((f) => f === "-n" || f === "--none"),
-  };
+    .split('-')
+    .map(s => s[0].toUpperCase() + s.slice(1))
+    .join('');
 }
 
 export default async function generateService(
   name,
-  customPath = "app",
-  isBare = false,
-  flags = [],
-  genConfig = {},
+  customPath = 'app',
+  options = {},
+  genConfig = {}
 ) {
-  flags = flags || [];
-  const baseDir = path.resolve(`${customPath}`);
+  const baseDir = path.resolve(customPath);
   const pascal = toPascalCase(name);
 
   await mkdir(baseDir, { recursive: true });
-  console.log("gen");
-  const framework = genConfig.framework?.name ?? "angular";
-  const frameworkVersion = genConfig.framework?.version ?? 19;
 
-  let scriptExtension = ".service.ts";
+  const framework = genConfig.framework?.name ?? 'angular';
+  const frameworkVersion = Number(genConfig.framework?.version ?? 19);
 
-  switch (framework) {
-    case "angular":
-      if (frameworkVersion >= 20) {
-        scriptExtension = ".ts";
-      }
-      break;
-
-    default:
-      console.error(`Unsupported framework: ${framework}`);
-      return;
+  // Extensión por defecto para Angular < 20
+  let scriptExtension = '.service.ts';
+  if (framework === 'angular' && frameworkVersion >= 20) {
+    // Mantengo tu comportamiento previo de usar .ts "plano" en v20+
+    scriptExtension = '.ts';
+  } else if (framework !== 'angular') {
+    console.error(`Unsupported framework: ${framework}`);
+    return;
   }
 
   const filePath = path.join(baseDir, `${name}${scriptExtension}`);
 
+  // ¿Existe el archivo?
   let exists = false;
   try {
-    await access(filePath, constants.F_OK);
+    await access(filePath, fs.constants.F_OK);
     exists = true;
-  } catch {}
+  } catch {
+    /* no existe */
+  }
 
   if (exists) {
     const { overwrite } = await inquirer.prompt([
       {
-        type: "confirm",
-        name: "overwrite",
+        type: 'confirm',
+        name: 'overwrite',
         message: `El servicio ${filePath} ya existe. ¿Sobrescribir?`,
         default: false,
       },
     ]);
     if (!overwrite) {
-      console.log("Operación cancelada.");
+      console.log('Operación cancelada.');
       return;
     }
   }
 
-  const { isRest, isGql, isNone } = parseFlags(flags);
-  let apiType = null;
-  if (isRest) apiType = "rest";
-  else if (isGql) apiType = "gql";
-  else if (isNone) apiType = "none";
-  else {
+  // Determinar tipo vía opciones parseadas por Commander
+  // Soporta: --rest / --gql / --none y también --type=rest|gql|none
+  let apiType =
+    (options.rest && 'rest') ||
+    (options.gql && 'gql') ||
+    (options.none && 'none') ||
+    (typeof options.type === 'string' &&
+    ['rest', 'gql', 'none'].includes(options.type)
+      ? options.type
+      : null);
+
+  if (!apiType) {
     const { type } = await inquirer.prompt([
       {
-        type: "list",
-        name: "type",
-        message: "¿Qué tipo de servicio deseas crear?",
+        type: 'list',
+        name: 'type',
+        message: '¿Qué tipo de servicio deseas crear?',
         choices: [
-          { name: "REST", value: "rest" },
-          { name: "GraphQL", value: "gql" },
-          { name: "Ninguno (servicio limpio)", value: "none" },
+          { name: 'REST', value: 'rest' },
+          { name: 'GraphQL', value: 'gql' },
+          { name: 'Ninguno (servicio limpio)', value: 'none' },
         ],
       },
     ]);
     apiType = type;
   }
 
-  let templateFile = "";
-  if (apiType === "gql") {
-    await mkdir(path.join(baseDir, "queries"), { recursive: true });
-    templateFile = path.join(
-      __dirname,
-      "../templates/angular/service/graphql.service.ts",
-    );
-    console.log("Directorio de queries creado");
-  } else if (apiType === "rest") {
-    templateFile = path.join(
-      __dirname,
-      "../templates/angular/service/rest.service.ts",
-    );
-  } else {
-    templateFile = path.join(
-      __dirname,
-      "../templates/angular/service/empty.service.ts",
-    );
-  }
-
-  if (apiType === "gql") {
-    const queriesDir = path.join(baseDir, "queries");
+  // Elegir plantilla y (si aplica) preparar queries GraphQL
+  let templateFile = '';
+  if (apiType === 'gql') {
+    const queriesDir = path.join(baseDir, 'queries');
     await mkdir(queriesDir, { recursive: true });
 
     const queryTemplates = [
-      { tpl: "get-all-query.ts", out: "get-all-query.ts" },
-      { tpl: "get-one-query.ts", out: "get-one-query.ts" },
-      { tpl: "create-query.ts", out: "create-query.ts" },
-      { tpl: "update-query.ts", out: "update-query.ts" },
+      { tpl: 'get-all-query.ts', out: 'get-all-query.ts' },
+      { tpl: 'get-one-query.ts', out: 'get-one-query.ts' },
+      { tpl: 'create-query.ts', out: 'create-query.ts' },
+      { tpl: 'update-query.ts', out: 'update-query.ts' },
     ];
 
     for (const { tpl, out } of queryTemplates) {
       const tplContent = await readFile(
-        path.join(__dirname, `../templates/angular/service/queries/${tpl}`),
-        "utf-8",
+        path.join(
+          __dirname,
+          '..',
+          'templates',
+          'angular',
+          'service',
+          'queries',
+          tpl
+        ),
+        'utf-8'
       );
       const outPath = path.join(queriesDir, out);
       const queryContent = tplContent
@@ -144,17 +127,44 @@ export default async function generateService(
     }
 
     const indexContent = `
-      export * from './get-all-query';
-      export * from './get-one-query';
-      export * from './create-query';
-      export * from './update-query';
-    `.trimStart();
+export * from './get-all-query';
+export * from './get-one-query';
+export * from './create-query';
+export * from './update-query';
+`.trimStart();
 
-    await writeFile(path.join(queriesDir, "index.ts"), indexContent);
-    console.log("Queries and barrel generados en", queriesDir);
+    await writeFile(path.join(queriesDir, 'index.ts'), indexContent);
+    templateFile = path.join(
+      __dirname,
+      '..',
+      'templates',
+      'angular',
+      'service',
+      'graphql.service.ts'
+    );
+    console.log('Queries and barrel generados en', queriesDir);
+  } else if (apiType === 'rest') {
+    templateFile = path.join(
+      __dirname,
+      '..',
+      'templates',
+      'angular',
+      'service',
+      'rest.service.ts'
+    );
+  } else {
+    templateFile = path.join(
+      __dirname,
+      '..',
+      'templates',
+      'angular',
+      'service',
+      'empty.service.ts'
+    );
   }
 
-  const tpl = await readFile(templateFile, "utf-8");
+  // Leer plantilla del servicio
+  const tpl = await readFile(templateFile, 'utf-8');
   const content = tpl
     .replace(/{{name}}/g, name)
     .replace(/{{pascalName}}/g, pascal)

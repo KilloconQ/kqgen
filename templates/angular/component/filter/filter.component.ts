@@ -5,12 +5,12 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-{{name}}',
-  templateUrl: './{{name}}.component.html',
-  styleUrls: ['./{{name}}.component.scss'],
+  templateUrl: './{{name}}.html',
+  styleUrls: ['./{{name}}.scss'],
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, FormsModule],
 })
-export class {{pascalName}}Component {
+export class {{pascalName}} {
   readonly filter = signal('');
   valueChange = output<string>();
 

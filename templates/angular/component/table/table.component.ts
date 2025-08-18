@@ -29,8 +29,8 @@ interface TableColumn {
 
 @Component({
   selector: 'app-{{name}}',
-  templateUrl: './{{name}}.component.html',
-  styleUrls: ['./{{name}}.component.scss'],
+  templateUrl: './{{name}}.html',
+  styleUrls: ['./{{name}}.scss'],
   standalone: true,
   imports: [
     MatTableModule,
@@ -40,7 +40,7 @@ interface TableColumn {
     FormsModule
   ],
 })
-export class {{pascalName}}Component implements AfterViewInit {
+export class {{pascalName}} implements AfterViewInit {
   columns = input<TableColumn[]>();
   data = input<any[]>();
 

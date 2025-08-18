@@ -48,6 +48,7 @@ program
 // ng:component
 program
   .command('ng:component <fullPath>')
+  .alias('ng:c')
   .description(chalk.cyan('Generate an Angular component'))
   .addHelpText(
     'after',
@@ -65,6 +66,7 @@ program
 // ng:service
 program
   .command('ng:service <fullPath>')
+  .alias('ng:s')
   .description(chalk.cyan('Generate an Angular service'))
   .addHelpText('after', `\n${chalk.gray('Types:')} REST, GraphQL, none`)
   .option('-r, --rest', chalk.cyan('Force REST service'))
@@ -117,12 +119,15 @@ async function runGenerator(scriptFile, fullPath, options) {
       : cwd;
   }
 
-  await action(name, targetDir, options.bare, process.argv.slice(3), genConfig);
+  await action(name, targetDir, Boolean(options.bare), options, genConfig);
 }
 
-function findProjectRootWithSrcApp(dir) {
-  while (dir !== '/' && dir !== '.') {
-    if (fs.existsSync(path.join(dir, 'src/app'))) return dir;
+function findProjectRootWithSrcApp(startDir) {
+  let dir = path.resolve(startDir);
+  const root = path.parse(dir).root;
+  while (true) {
+    if (fs.existsSync(path.join(dir, 'src', 'app'))) return dir;
+    if (dir === root) break;
     dir = path.dirname(dir);
   }
   return null;

@@ -12,52 +12,41 @@ function toPascalCase(str) {
     .join('');
 }
 
-function getPreset(flags) {
-  const aliases = {
-    '--type=add-dialog': 'add-dialog',
-    '--type=filter': 'filter',
-    '--type=table': 'table',
-    '--type=card': 'card',
-    '-t': 'table',
-    '-tad': 'add-dialog',
-    '-tf': 'filter',
-    '-tt': 'table',
-    '-tc': 'card',
-  };
-
-  for (const flag of flags) {
-    if (aliases[flag]) return aliases[flag];
-    const eqIndex = flag.indexOf('=');
-    if (eqIndex !== -1) {
-      const key = flag.slice(0, eqIndex) + '=' + flag.slice(eqIndex + 1);
-      if (aliases[key]) return aliases[key];
-    }
-  }
-
-  return 'default';
-}
-
 export default async function generateComponent(
   name,
   customPath = 'app',
   isBare = false,
-  flags = [],
+  options = {},
   genConfig = {}
 ) {
-  const baseDir = path.resolve(`${customPath}/${name}`);
+  const baseDir = path.resolve(path.join(customPath, name));
   const pascal = toPascalCase(name);
+
   const primaryColor = genConfig.theme?.primaryColor || '#000';
   const secondaryColor = genConfig.theme?.secondaryColor || '#fff';
   const borderRadius = genConfig.theme?.borderRadius || '5px';
 
   const framework = genConfig.framework?.name ?? 'angular';
-  const frameworkVersion = genConfig.framework?.version ?? 19;
+  const frameworkVersion = Number(genConfig.framework?.version ?? 19);
 
+  // Extensiones por defecto (Angular < 20)
   let scriptExtension = '.component.ts';
   let templateExtension = '.component.html';
   let styleExtension = '.component.scss';
 
-  const preset = getPreset(flags);
+  // Ajuste para Angular 20+
+  const isA20Plus = framework === 'angular' && frameworkVersion >= 20;
+  if (isA20Plus) {
+    scriptExtension = '.ts';
+    templateExtension = '.html';
+    styleExtension = '.scss';
+  } else if (framework !== 'angular') {
+    console.error(`Unsupported framework: ${framework}`);
+    return;
+  }
+
+  // Determina el preset desde Commander (options.type)
+  const preset = options.type ?? 'default';
 
   await mkdir(baseDir, { recursive: true });
 
@@ -67,45 +56,55 @@ export default async function generateComponent(
     await mkdir(path.join(baseDir, 'interfaces'), { recursive: true });
   }
 
-  switch (framework) {
-    case 'angular':
-      if (frameworkVersion >= 20) {
-        scriptExtension = '.ts';
-        templateExtension = '.html';
-        styleExtension = '.scss';
-      }
-      break;
+  // Rutas de templates (A<20 usa *.component.*, A≥20 usa sin sufijo)
+  const baseTemplate = isA20Plus ? preset : `${preset}.component`;
 
-    default:
-      console.error(`Unsupported framework: ${framework}`);
-      return;
+  const tsTemplatePath = path.join(
+    __dirname,
+    '..',
+    'templates',
+    'angular',
+    'component',
+    preset,
+    `${baseTemplate}.ts`
+  );
+  const htmlTemplatePath = path.join(
+    __dirname,
+    '..',
+    'templates',
+    'angular',
+    'component',
+    preset,
+    `${baseTemplate}.html`
+  );
+  const scssTemplatePath = path.join(
+    __dirname,
+    '..',
+    'templates',
+    'angular',
+    'component',
+    preset,
+    `${baseTemplate}.scss`
+  );
+
+  // Lee templates en paralelo
+  let ts, html, scss;
+  try {
+    [ts, html, scss] = await Promise.all([
+      readFile(tsTemplatePath, 'utf-8'),
+      readFile(htmlTemplatePath, 'utf-8'),
+      readFile(scssTemplatePath, 'utf-8'),
+    ]);
+  } catch (err) {
+    console.error(
+      `Error reading templates for preset "${preset}". ` +
+        `Check that the files exist under templates/angular/component/${preset}/`
+    );
+    throw err;
   }
 
-  const [ts, html, scss] = await Promise.all([
-    readFile(
-      path.join(
-        __dirname,
-        `../templates/angular/component/${preset}/${preset}.component.ts`
-      ),
-      'utf-8'
-    ),
-    readFile(
-      path.join(
-        __dirname,
-        `../templates/angular/component/${preset}/${preset}.component.html`
-      ),
-      'utf-8'
-    ),
-    readFile(
-      path.join(
-        __dirname,
-        `../templates/angular/component/${preset}/${preset}.component.scss`
-      ),
-      'utf-8'
-    ),
-  ]);
-
-  const replace = str =>
+  // Reemplazos comunes
+  const applyReplacements = str =>
     str
       .replace(/{{name}}/g, name)
       .replace(/{{pascalName}}/g, pascal)
@@ -113,14 +112,18 @@ export default async function generateComponent(
       .replace(/{{secondaryColor}}/g, secondaryColor)
       .replace(/{{borderRadius}}/g, borderRadius);
 
-  await writeFile(path.join(baseDir, `${name}${scriptExtension}`), replace(ts));
+  // Escribe archivos finales
+  await writeFile(
+    path.join(baseDir, `${name}${scriptExtension}`),
+    applyReplacements(ts)
+  );
   await writeFile(
     path.join(baseDir, `${name}${templateExtension}`),
-    replace(html)
+    applyReplacements(html)
   );
   await writeFile(
     path.join(baseDir, `${name}${styleExtension}`),
-    replace(scss)
+    applyReplacements(scss)
   );
 
   console.log(`${name} component successfully generated`);

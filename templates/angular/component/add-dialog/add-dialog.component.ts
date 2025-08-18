@@ -13,9 +13,9 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './add.html',
   styleUrls: ['./add.scss']
 })
-export class Add{{pascalName}}Component {
+export class Add{{pascalName}} {
   private fb = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<Add{{pascalName}}Component>);
+  private dialogRef = inject(MatDialogRef<Add{{pascalName}}>);
 
   public {{name}}Form!: FormGroup;
 
